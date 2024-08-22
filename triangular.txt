@@ -1,0 +1,117 @@
+
+struct Tile{
+    Coord coord; //map
+    Texture textureTop;
+    Texture textureBot;
+
+    void print(QPainter &painter){
+        int x=coord.x;
+        int y=coord.y;
+        int parity=y%2-x%2;
+
+        if(parity){
+            int coordX=x*textureBot.pmap.width()/2;
+            int coordY=y*textureBot.pmap.height();
+            painter.drawPixmap(100+coordX, 100+coordY, textureBot.pmap);
+        }
+        else{
+            int coordX=x*textureTop.pmap.width()/2;
+            int coordY=y*textureTop.pmap.height();
+            painter.drawPixmap(100+coordX, 100+coordY, textureTop.pmap);
+        }
+
+    }
+
+    static void orderTiles(std::vector<Tile> &tiles){
+        std::sort(tiles.begin(), tiles.end(), compareTiles);
+    }
+private:
+    static bool compareTiles(const Tile& a, const Tile& b) {
+        int paritya=abs(a.coord.y%2-a.coord.x%2);
+        int parityb=abs(b.coord.y%2-a.coord.x%2);
+        if(a.coord.y < b.coord.y)
+            return 1;
+        if(a.coord.y == b.coord.y && paritya>parityb)
+            return 1;
+        return 0;
+    }
+};
+
+struct Shape{
+    std::vector<Tile> tiles;
+    void addTile(Coord coord, Texture textureTop, Texture textureBot){
+        Tile tile;
+        tile.coord=coord;
+        tile.textureTop=textureTop;
+        tile.textureBot=textureBot;
+        tiles.push_back(tile);
+    }
+
+    void print(QPainter &painter){
+        Tile::orderTiles(tiles);
+        for(int j=0;j<20;j++)
+            for(int i=0;i<tiles.size();i++){
+                int x=tiles.at(i).coord.x;
+                int y=tiles.at(i).coord.y;
+                int parity=y%2-x%2;
+                if(y*2+(1-parity)==j){
+                    tiles.at(i).print(painter);
+                }
+            }
+    }
+
+    void rotate(){
+        for(int i=0;i<tiles.size();i++){
+            int x=tiles.at(i).coord.x;
+            int y=tiles.at(i).coord.y;
+            tiles.at(i).coord.x=-(x+(x%2))/2  +  (y*3-(y%2))/2;
+            tiles.at(i).coord.y=-(x-(x%2))/2  +  (-y+(y%2))/2;
+        }
+    }
+
+};
+
+struct Map{
+    std::vector<Tile> tiles;
+
+    void addTile(Coord coord, Texture textureTop, Texture textureBot){
+        Tile tile;
+        tile.coord=coord;
+        tile.textureTop=textureTop;
+        tile.textureBot=textureBot;
+        tiles.push_back(tile);
+    }
+
+
+    void print(QPainter &painter){
+        Tile::orderTiles(tiles);
+        for(int j=-20;j<20;j++)
+            for(int i=0;i<tiles.size();i++){
+                int x=tiles.at(i).coord.x;
+                int y=tiles.at(i).coord.y;
+                int parity=y%2-x%2;
+                if(y*2+(1-parity)==j){
+                    tiles.at(i).print(painter);
+                }
+            }
+    }
+
+    void rotate(){
+        for(int i=0;i<tiles.size();i++){
+            int x=tiles.at(i).coord.x;0 2
+            int y=tiles.at(i).coord.y;2 3
+                
+                int a=y-x;1
+                int b=y*2;6
+                int c=0;
+            
+            int nx=-(x+(x%2))/2  +  (y*3-(y%2))/2;
+            int ny=-(x-(x%2))/2  +  (-y+(y%2))/2;
+            tiles.at(i).coord.x=nx;
+            tiles.at(i).coord.y=ny;
+        }
+    }
+
+private:
+
+};
